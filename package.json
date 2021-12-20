@@ -4,7 +4,8 @@
   "description": "my first socket.io app",
   "dependencies": {
     "express": "^4.17.1",
-    "socket.io": "^4.1.2"
+    "socket.io": "^4.1.2",
+    "webrtc-swarm": "^2.9.0"
   },
   "scripts": {
     "start": "node index.js"
