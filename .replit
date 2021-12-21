@@ -1,2 +1,2 @@
 language = "nodejs"
-run = "node index.js"
+run = "./node_modules/.bin/nodemon -q -x 'clear;node' index.js"
