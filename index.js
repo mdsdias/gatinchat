@@ -1,4 +1,5 @@
-const app = require('express')();
+const express = require('express');
+const app = express();
 const http = require('http').Server(app);
 const io = require('socket.io')(http);
 const ejs = require('ejs');
@@ -12,7 +13,6 @@ app.set('view engine', 'ejs');
 app.get('/', (req, res) => {
   res.render('index.ejs');
 })
-
 
 app.get('/chat/:id?', (req, res) => {
   res.render('chat.ejs');
