@@ -56,7 +56,7 @@
     </style>
   </head>
   <body>
-    <ul id="messages"></ul>
+    <ul id="messages"> <!-- messages go here :D --> </ul>
     <form id="form" action="">
       <input id="input" autocomplete="off" /><button>Send</button>
     </form>
@@ -65,16 +65,16 @@
     <script src="libs.js" charset="utf-8"></script>
     <script type="text/javascript">
       var socket = io();
-      function criarMensagem(msg) {
+      var messages = document.getElementById("messages");
+      var form = document.getElementById("form");
+      var input = document.getElementById("input");
+
+      private function criarMensagem(msg) {
         var item = document.createElement("li");
         item.textContent = msg;
         messages.appendChild(item);
         window.scrollTo(0, document.body.scrollHeight);
       }
-
-      var messages = document.getElementById("messages");
-      var form = document.getElementById("form");
-      var input = document.getElementById("input");
 
       form.addEventListener("submit", function (e) {
         e.preventDefault();
@@ -86,6 +86,7 @@
       socket.on("started", function (id) {
         criarMensagem(`[Console]: Joined ${id} in chat!`);
       });
+
       socket.on("chat message", function (msg, id) {
         criarMensagem(`${id}: ${msg}`);
       });
