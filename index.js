@@ -9,9 +9,13 @@ var current;
 app.set('views', __dirname + "/views")
 app.set('view engine', 'ejs');
 
-
-app.get('/chat/:id', (req, res) => {
+app.get('/', (req, res) => {
   res.render('index.ejs');
+})
+
+
+app.get('/chat/:id?', (req, res) => {
+  res.render('chat.ejs');
   current = req.params.id;
 });
 
@@ -20,9 +24,9 @@ io.on('connection', (socket) => {
   socket.on('chat message', (msg) => {
     if (current) {
         socket.join(current)
-        socket.to(current).emit('chat message', msg, socket.id)
+        socket.emit('chat message', msg, socket.id)
     } else {
-        io.emit('chat message', msg, socket.id);
+        socket.emit('chat message', msg, socket.id);
     }
   });
 });
