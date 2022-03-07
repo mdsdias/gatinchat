@@ -1,38 +1,35 @@
-const express = require('express')
+const express = require('express');
 const app = express();
 const http = require('http').Server(app);
-const io = require('socket.io')(http);
-const ejs = require('ejs');
-
+const server = require('socket.io')(http);
 const port = process.env.PORT || 3000;
-var current;
+const users = {
+    //"nome": "id"
+};
 
 app.set('views', __dirname + "/views");
 app.set('view engine', 'ejs');
-app.set(express.static('/public'))
-
-app.get('/', (req, res) => {
-  res.render('index.ejs');
-})
-
-app.get('/chat/:id?', (req, res) => {
-  res.render('chat.ejs');
-  current = req.params.id;
+app.use(express.static(__dirname + '/public'));
+app.get('/', (q, r) => {
+    r.render('chat.ejs');
+});
+server.on('connection', (socket) => {
+    server.emit('started', socket.id);
+    console.log(users);
+    server.emit('writeConsole', `Entrou um novo user, ${
+        socket.id
+    }`);
+    socket.on('sub', (msg) => {
+        server.emit('writeMsg', msg, users[socket.id]);
+    });
+    socket.on('add', (name, atualId) => {
+        if (users[atualId] == name) {
+            server.emit('writeConsole', "Existe um user registrado com esse nick!")
+        }
+        else {
+            users[atualId] = name
+        }
+    })
 });
 
-io.on('connection', (socket) => {
-
-  io.emit('started', socket.id)
-  socket.on('chat message', (msg) => {
-    if (current) {
-        socket.join(current)
-        io.emit('chat message', msg, socket.id)
-    } else {
-        io.emit('chat message', msg, socket.id);
-    }
-  });
-});
-
-http.listen(port, () => {
-  console.log(`Hello Legumi! Como vai meu bom?`);
-});
+http.listen(port);

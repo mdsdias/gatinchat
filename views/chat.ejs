@@ -5,40 +5,25 @@
     <link rel="stylesheet" href="/css/index.css">
   </head>
   <body>
-    <ul id="messages"> <!-- messages go here :D --> </ul>
+    <header>
+      <form id="nick" action="" autocomplete="off">
+        <input type="text" placehoder="Seu nome de usuario" id="nikk">
+        <button type="submit">Subimitar</button>
+      </form>
+      <script>
+        const epe = document.getElementById('nikk');
+        document.getElementById('nick').addEventListener('submit', event =>
+        {
+          event.preventDefault();
+          localStorage.setItem('name', epe.value);
+        })
+      </script>
+    </header>
+    <ul id="messages"></ul>
     <form id="form" action="">
       <input id="input" autocomplete="off" /><button>Send</button>
     </form>
     <script src="/socket.io/socket.io.js"></script>
-    <script src="main.js"></script>
-    <script src="libs.js" charset="utf-8"></script>
-    <script type="text/javascript">
-      var socket = io();
-      var messages = document.getElementById("messages");
-      var form = document.getElementById("form");
-      var input = document.getElementById("input");
-
-      private function criarMensagem(msg) {
-        var item = document.createElement("li");
-        item.textContent = msg;
-        messages.appendChild(item);
-        window.scrollTo(0, document.body.scrollHeight);
-      }
-
-      form.addEventListener("submit", function (e) {
-        e.preventDefault();
-        if (input.value) {
-          socket.emit("chat message", input.value);
-          input.value = "";
-        }
-      });
-      socket.on("started", function (id) {
-        criarMensagem(`[Console]: Joined ${id} in chat!`);
-      });
-
-      socket.on("chat message", function (msg, id) {
-        criarMensagem(`${id}: ${msg}`);
-      });
-    </script>
+    <script src="main.js" type="text/javascript"></script>
   </body>
 </html>
