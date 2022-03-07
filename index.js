@@ -4,7 +4,7 @@ const http = require('http').Server(app);
 const server = require('socket.io')(http);
 const port = process.env.PORT || 3000;
 const users = {
-    //"nome": "id"
+    //"id": "nome"
 };
 
 app.set('views', __dirname + "/views");
