@@ -1,29 +1,61 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="pt">
   <head>
-    <title>Socket.IO chat</title>
-    <link rel="stylesheet" href="/css/index.css">
+    <meta charset="utf-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1, shrink-to-fit=no"
+    />
+    <title>GatinChat 🐱</title>
+    <!-- <link rel="stylesheet" href="/css/index.css">
+    <link rel="stylesheet" href="/css/theme.css"> -->
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css"
+      integrity="sha384-1BmE4kWBq78iYhFldvKuhfTAU6auU8tT94WrHftjDbrCEXSU1oBoqyl2QvZ6jIW3"
+      crossorigin="anonymous"
+    />
   </head>
   <body>
-    <header>
-      <form id="nick" action="" autocomplete="off">
-        <input type="text" placehoder="Seu nome de usuario" id="nikk">
-        <button type="submit">Subimitar</button>
-      </form>
-      <script>
-        const epe = document.getElementById('nikk');
-        document.getElementById('nick').addEventListener('submit', event =>
-        {
-          event.preventDefault();
-          localStorage.setItem('name', epe.value);
-        })
-      </script>
-    </header>
-    <ul id="messages"></ul>
-    <form id="form" action="">
-      <input id="input" autocomplete="off" /><button>Send</button>
-    </form>
+    <div class="container">
+      <ul class="list-group" id="users" style="list-style-type: none;"></ul>
+      <ul id="messages" style="list-style-type: none;"></ul>
+      <div class="input-group mb-3 align-items-end" id="form" style="position:fixed; bottom:0;">
+        <input
+          type="text"
+          class="form-control"
+          placeholder="Message to send"
+          aria-label="Message to send"
+          aria-describedby="btn-send"
+          id="inp-send"
+        />
+        <div class="input-group-append">
+          <button class="btn btn-outline-secondary" type="button" id="btn-send">
+            Send
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- scripts -->
     <script src="/socket.io/socket.io.js"></script>
+    <script src="js/themes.js"></script>
+    <script
+      src="https://code.jquery.com/jquery-3.3.1.slim.min.js"
+      integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo"
+      crossorigin="anonymous"
+    ></script>
+    <script
+      src="https://cdn.jsdelivr.net/npm/popper.js@1.14.7/dist/umd/popper.min.js"
+      integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1"
+      crossorigin="anonymous"
+    ></script>
+    <script
+      src="https://cdn.jsdelivr.net/npm/bootstrap@4.3.1/dist/js/bootstrap.min.js"
+      integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM"
+      crossorigin="anonymous"
+    ></script>
     <script src="main.js" type="text/javascript"></script>
+    <!--  -->
   </body>
 </html>

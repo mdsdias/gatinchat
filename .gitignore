@@ -1,1 +1,4 @@
 node_modules/
+.replit
+.upm
+package-lock.json
