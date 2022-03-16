@@ -21,6 +21,10 @@ app.get("/*", (q, r) => {
   r.render("chat.ejs");
 });
 
+app.get("/pingOn", (q, r) => {
+  r.send("Pong!");
+});
+
 function room(id) {
   try {
     return rooms.find((r) => r.id == id);
@@ -30,36 +34,44 @@ function room(id) {
 }
 
 function user(id) {
-  try {
-    return users.find((u) => u.id == id);
-  } catch (e) {
-    return null;
-  }
+  return users.find((u) => u.id == id) || null;
 }
 
 function deduplicate(arr) {
   try {
-    users = arr.filter((obj, index, self) => {
+    u = arr.filter((obj, index, self) => {
       return index === self.findIndex((t) => t.id === obj.id);
     });
-  } catch (e) {
-    console.log(e);
-  }
+    users = u;
+  } catch (e) {}
 }
 
-function roomUpdate() { 
+function roomUpdate() {
+  r = [];
   for (const [k, v] of Object.entries(users)) {
-    console.log(k, v);
-    
+    if (v.room in r) {
+      r[v.room].users.push(v);
+    } else r.push({ id: v.room, name: v.room, users: [v] });
   }
+  rooms = r;
 }
 
 server.on("connection", (socket) => {
-  socket.on("messageRoom", (msg, id) => {
-    var usr = user(id),
-      nick = usr["nick"],
-      room = usr["room"];
-    server.to(room).emit("send_message", msg, id, nick);
+  socket.on("messageRoom", (msg, id, roomLocal) => {
+    if (user(id)) { //verifica se o usuario existe
+      if (room(roomLocal)) { //verifica se a sala existe
+        server.to(roomLocal).emit("messageRoom", msg, id, roomLocal);
+      } else {
+        socket.emit("messageRoom", "Sala não existe", id, roomLocal);
+      }
+    } else {
+      socket.emit("messageRoom", "Usuário não existe", id, roomLocal);
+    }
+    // var usr = user(id),
+    //   nick = usr["nick"] || "Anônimo",
+    //   room = usr["room"] || roomLocal;
+    // if (room == roomLocal) usr['room'] = roomLocal;
+    // server.to(room).emit("send_message", msg, id, nick);
   });
 
   socket.on("lista", () => {
@@ -101,7 +113,6 @@ server.on("connection", (socket) => {
         item.nick = data.new;
       }
     });
-    server.emit("userList", users);
   });
 
   socket.on("disconnect", (reason) => {
@@ -110,19 +121,41 @@ server.on("connection", (socket) => {
     }
     try {
       var usr = user(socket.id);
-      console.log("Usuário desconectado: " + usr["nick"]);
-      for (var i = 0; i < users.length; i++) {
-        if (users[i].id === socket.id) {
-          delete users[i];
+      if (usr.room) {
+        socket.leave(usr.room);
+        for (let i = 0; i < rooms.length; i++) {
+          if (rooms[i].id == usr.room) {
+            for (let j = 0; j < rooms[i].users.length; j++) {
+              if (rooms[i].users[j].id == usr.id) {
+                delete rooms[i].users[j];
+              }
+            }
+          }
+        }
+      } else {
+        for (var i = 0; i < users.length; i++) {
+          if (users[i].id === socket.id) {
+            delete users[i];
+          }
         }
       }
     } catch (e) {
-      console.log('Não foi possível desconectar o usuário');
+      console.log("Não foi possível desconectar o usuário");
     }
   });
-  roomUpdate();
 });
 
-setInterval(() => deduplicate(users), 2 * 1000);
+setInterval(() => {
+  deduplicate(users);
+  for (let i = 0; i < rooms.length; i++) {
+    deduplicate(rooms[i].users);
+  }
+  roomUpdate();
+}, 1000);
+
+setInterval(() => {
+  console.clear();
+  console.dir(rooms, { depth: null });
+}, 2 * 1000);
 
 http.listen(port);

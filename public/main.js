@@ -103,7 +103,7 @@ form.click(function (e) {
     input.focus();
     return;
   }
-  socket.emit("messageRoom", input.val(), socket.id);
+  socket.emit("messageRoom", input.val(), socket.id, room);
   input.val("");  
   input.focus();
 });
