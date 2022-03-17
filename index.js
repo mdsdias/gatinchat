@@ -74,6 +74,19 @@ server.on("connection", (socket) => {
     // server.to(room).emit("send_message", msg, id, nick);
   });
 
+  socket.on('privateMsg', (IdRecive, mensagem, IdInvite) => {
+    if (user(IdRecive)) {
+      if (user(IdInvite)) {
+        server.to(IdRecive).emit('privateMsg', { id: IdInvite, msg: mensagem, nome: user(IdInvite).nick });
+        server.to(IdInvite).emit('privateMsg', { id: IdRecive, msg: mensagem, nome: user(IdRecive).nick });
+      } else {
+        socket.emit('privateMsg', 'Usuário não existe', IdInvite, IdRecive);
+      }
+    } else {
+      socket.emit('privateMsg', 'Usuário não existe', IdRecive, IdInvite);
+    }
+  })
+
   socket.on("lista", () => {
     try {
       var usr = user(socket.id);
@@ -154,8 +167,7 @@ setInterval(() => {
 }, 1000);
 
 setInterval(() => {
-  console.clear();
   console.dir(rooms, { depth: null });
-}, 2 * 1000);
+}, 5 * 1000);
 
 http.listen(port);
